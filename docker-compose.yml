@@ -1,0 +1,31 @@
+# This compose file provisions PostgreSQL for local development. The
+# backend and frontend are run natively (see README "Local Setup") so that
+# `--reload` / Vite HMR work well during development; only the database
+# -- the one component that's genuinely annoying to install locally on
+# every OS -- is containerized here.
+#
+# Usage:
+#   docker compose up -d
+#   (then follow the backend/frontend setup steps in README.md)
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: real_estate_crm
+    ports:
+      - "5433:5432"
+    volumes:
+      - crm_pgdata_2:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  crm_pgdata_2:

@@ -1,0 +1,26 @@
+# --- Backend (Python) ---
+backend/venv/
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+backend/.env
+
+# --- Frontend (Node) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# --- Logs / misc ---
+*.log
+.coverage
+htmlcov/
