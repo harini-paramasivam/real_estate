@@ -14,6 +14,10 @@ if db_url.startswith("postgres://"):
 if db_url.startswith("postgresql://") and not db_url.startswith("postgresql+psycopg2://"):
     db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
+if not db_url.startswith("postgresql"):
+    raise ValueError(f"DEBUG RENDER ENV: The raw database_url was {repr(settings.database_url)} and db_url became {repr(db_url)}")
+
+
 engine = create_engine(db_url, pool_pre_ping=True, future=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, future=True)
 
