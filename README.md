@@ -262,16 +262,32 @@ Properties, Unit list, Booking flow, and Bookings pages directly.
 
 ## Deployment
 
-`docker-compose.yml` provisions a PostgreSQL container for local
-development (`docker compose up -d db`), since running Postgres in a
-container is the most common friction point in "clone and run" setups.
-The backend and frontend are intended to run natively during development
-(`uvicorn --reload`, `npm run dev`) for fast iteration; both are plain
-Python/Node processes and can be containerized the same way for a
-production deployment (e.g. behind Gunicorn/Uvicorn workers and a static
-build served by Nginx), which was left out here to keep the deliverable
-focused rather than adding container layers that wouldn't be exercised by
-this assignment.
+This repository is strictly configured for a production deployment across **Vercel** (Frontend) and **Render** (Backend + Database).
+
+### 1. Database & Backend (Render)
+1. Sign up/log in to [Render](https://render.com) and connect your GitHub repository.
+2. Render will automatically detect the `render.yaml` Blueprint file at the repository root.
+3. Apply the Blueprint. Render will automatically provision:
+   - A free **PostgreSQL database** (`real-estate-crm-db`).
+   - A **Python web service** (`real-estate-crm-api`) running FastAPI.
+4. The Blueprint automatically configures the environment and executes `alembic upgrade head` before starting the server.
+5. **Important:** Note the public URL of your deployed web service (e.g., `https://real-estate-crm-api.onrender.com`).
+
+**Required Environment Variables (Render)**
+- `DATABASE_URL` (injected automatically by the Blueprint)
+- `SECRET_KEY` (generated automatically by the Blueprint)
+- `CORS_ORIGINS` (Set this to your Vercel frontend URL, e.g., `https://your-frontend.vercel.app`)
+
+### 2. Frontend (Vercel)
+1. Sign up/log in to [Vercel](https://vercel.com) and import your GitHub repository.
+2. Set the **Root Directory** to `frontend`.
+3. Vercel will automatically detect Vite and run `npm run build`.
+4. **Environment Variables:**
+   - Name: `VITE_API_URL`
+   - Value: `https://<your-render-backend-url>.onrender.com` (from Step 1)
+5. Click **Deploy**.
+
+*Ensure you copy the final Vercel URL back to your Render `CORS_ORIGINS` environment variable.*
 
 ## Future Improvements
 
