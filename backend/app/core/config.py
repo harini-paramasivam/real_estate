@@ -1,5 +1,6 @@
 """Application configuration loaded from environment variables."""
 from functools import lru_cache
+from typing import Any
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -12,11 +13,15 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 480
     cors_origins: str = "http://localhost:5173"
 
-    @field_validator("database_url")
+    @field_validator("database_url", mode="before")
     @classmethod
-    def assemble_db_connection(cls, v: str) -> str:
+    def assemble_db_connection(cls, v: Any) -> str:
+        if not v or not str(v).strip():
+            return "postgresql+psycopg2://postgres:postgres@localhost:5432/real_estate_crm"
+        
         # Strip accidental quotes or whitespace often pasted into Render dashboard
-        v = v.strip('"\' \t\n\r')
+        v = str(v).strip('"\' \t\n\r')
+        
         if v.startswith("postgres://"):
             return v.replace("postgres://", "postgresql+psycopg2://", 1)
         if v.startswith("postgresql://") and not v.startswith("postgresql+psycopg2://"):
