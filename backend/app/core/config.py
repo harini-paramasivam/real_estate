@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     @field_validator("database_url")
     @classmethod
     def assemble_db_connection(cls, v: str) -> str:
+        # Strip accidental quotes or whitespace often pasted into Render dashboard
+        v = v.strip('"\' \t\n\r')
         if v.startswith("postgres://"):
             return v.replace("postgres://", "postgresql+psycopg2://", 1)
         if v.startswith("postgresql://") and not v.startswith("postgresql+psycopg2://"):
