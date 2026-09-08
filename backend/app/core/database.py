@@ -15,7 +15,13 @@ if db_url.startswith("postgresql://") and not db_url.startswith("postgresql+psyc
     db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 if not db_url.startswith("postgresql"):
-    raise ValueError(f"DEBUG RENDER ENV: The raw database_url was {repr(settings.database_url)} and db_url became {repr(db_url)}")
+    raise ValueError(
+        f"CRITICAL CONFIGURATION ERROR: Your DATABASE_URL is currently set to '{db_url}'. "
+        "This appears to be just a hostname (or invalid string), not a full connection string! "
+        "Please go to your Render Dashboard, copy the 'Internal Database URL' "
+        "(which looks like postgres://user:pass@host/db), and paste it into "
+        "the DATABASE_URL environment variable for your Web Service."
+    )
 
 
 engine = create_engine(db_url, pool_pre_ping=True, future=True)
